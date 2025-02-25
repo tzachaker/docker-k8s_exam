@@ -1,0 +1,40 @@
+services:
+  web:
+    build:
+      context: ./fe
+    ports:
+      - "5002:5002"
+    networks:
+      - tzach_network
+
+  backend-service:
+    build:
+      context: ./be
+    ports:
+    # I changed the port to 5010 for it will work
+      - "5010:5001"
+    depends_on:
+      - mysqldb
+    environment:
+    - MYSQL_HOST=mysqldb  # Connect to MySQL via service name
+    - MYSQL_USER=root
+    - MYSQL_PASSWORD=123456
+    - MYSQL_DB=crypto_db
+    networks:
+      - tzach_network
+
+  mysqldb:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      # create database name crypto_db
+      MYSQL_DATABASE: crypto_db
+    ports:
+      - "3306:3306"
+    networks:
+      - tzach_network
+
+networks:
+  tzach_network:
+    driver: bridge
+
